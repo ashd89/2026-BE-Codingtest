@@ -1,0 +1,77 @@
+// 백준 7576번 토마토 (BFS)
+// 최수아
+
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int M = Integer.parseInt(st.nextToken());
+        int N = Integer.parseInt(st.nextToken());
+
+        int[][] box = new int[N][M];
+        int possible = M*N; // 익지 않은 토마토 개수
+        int cnt = 0;
+
+        Queue<Node> q = new ArrayDeque<>();
+
+        for (int i=0; i<N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j=0; j<M; j++) {
+                box[i][j] = Integer.parseInt(st.nextToken());
+                if (box[i][j] != 0) {
+                    possible -= 1;
+                }
+                if (box[i][j] == 1) {
+                    q.add(new Node(0,i,j));
+                    cnt++;
+                }
+            }
+        }
+
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+
+
+        int day = -1;
+        int total = 0;
+
+        while (!q.isEmpty()) {
+            Node n = q.poll();
+            day = n.d;
+            total++;
+            for (int i=0; i<4; i++) {
+                int x = n.x + dx[i];
+                int y = n.y + dy[i];
+                if (x < 0 || x >= N || y < 0 || y >= M)
+                    continue;
+                if (box[x][y] == 0) { // && !visited[x][y]
+                    box[x][y] = 1;  // 동일한 지인이 또 넣는 걸 막기 위해
+                    q.add(new Node(n.d+1, x, y));
+                }
+            }
+        }
+
+        if (possible != total - cnt)
+            day = -1;
+
+        bw.write(String.valueOf(day));
+        bw.flush();
+        bw.close();
+    }
+
+    static class Node {
+        int d, x, y;
+        Node(int d, int x, int y) {
+            this.d = d;
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+}
