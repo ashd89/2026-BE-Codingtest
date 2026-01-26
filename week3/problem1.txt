@@ -1,0 +1,58 @@
+import java.io.*;
+import java.util.*;
+// 백준 15654
+public class Main {
+    static List<Num> col;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+
+        st = new StringTokenizer(br.readLine());
+        col = new ArrayList<>();
+
+        for (int i = 0; i<N; i++) {
+            int n = Integer.parseInt(st.nextToken());
+            col.add(new Num(n));
+        }
+        col.sort(Comparator.comparingInt(a -> a.n));
+
+        backTracking(M, 0, col, new ArrayList<>());
+    }
+
+    static class Num {
+        int n;
+        boolean visited;
+        Num(int n) {
+            this.n = n;
+            this.visited = false;
+        }
+    }
+
+    public static void backTracking(int maxCnt, int curCnt, List<Num> original,  List<Integer> row) {
+        if (curCnt == maxCnt) {
+            for (int num : row)
+                System.out.print(num + " ");
+            System.out.println();
+            return;
+        }
+
+        for (int i = 0; i < original.size(); i++) {
+            Num cur = original.get(i);
+            if (!cur.visited) {
+                cur.visited = true;
+                original.remove(i);
+                row.add(cur.n);
+
+                backTracking(maxCnt, curCnt+1, original, row);
+
+                cur.visited = false;
+                original.add(i, cur);
+                row.remove(row.size()-1);
+            }
+        }
+    }
+}
