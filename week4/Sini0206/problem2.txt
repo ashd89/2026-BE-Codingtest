@@ -1,0 +1,53 @@
+import java.io.*;
+import java.util.*;
+// 백준 9465 스티커
+class Main {
+    static int[] dy = {-1, -2, -2};
+    static int[] dx = {1, 1, 0};
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int[][] stickers;
+        int[][] dp; // 해당 위치를 마지막으로 택했을 때 최댓값
+
+        int T = Integer.parseInt(br.readLine());
+
+        for (int t = 0; t<T; t++) {
+            int n = Integer.parseInt(br.readLine());
+            stickers = new int[2][n];
+            dp = new int[2][n];
+            // 스티커 입력
+            for (int i=0; i<2; i++) {
+                StringTokenizer st = new StringTokenizer(br.readLine());
+                for (int j=0; j<n; j++) {
+                    stickers[i][j] = Integer.parseInt(st.nextToken());
+                }
+            }
+            // dp 구하기
+            for (int i=0; i<n; i++) { // 00 10 01 11 02 12 순
+                for (int j=0; j<2; j++) {
+                    if (i == 0) {
+                        dp[j][i] = stickers[j][i];
+                        continue;
+                    }
+                    int max = stickers[j][i];
+                    for (int k=0; k<3; k++) {
+                        // 가능한 이전 선택지 탐색
+                        int pi = i + dy[k];
+                        int pj;
+                        if (j == 0)
+                            pj = j + dx[k];
+                        else
+                            pj = j - dx[k];
+                        // 엣지 케이스 처리
+                        if (pj >= n || pi >= n || pj < 0 || pi < 0)
+                            continue;
+                        max =  Math.max(max, dp[pj][pi]+stickers[j][i]);
+                    }
+                    dp[j][i] = max;
+                }
+            }
+            System.out.println(Math.max(dp[0][n-1], dp[1][n-1]));
+        }
+    }
+}

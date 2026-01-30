@@ -1,0 +1,81 @@
+import java.io.*;
+import java.util.*;
+// 백준 1244
+class Main {
+    static boolean[] switches;
+    static StringBuffer sb = new StringBuffer();
+
+    public static void main(String[] args) throws IOException  {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        // 스위치 수 입력
+        int switchCnt = Integer.parseInt(st.nextToken());
+        // 스위치 초기화
+        switches = new boolean[switchCnt+1];
+        // 스위치 상태 입력
+        st = new StringTokenizer(br.readLine());
+        for (int i=1; i<=switchCnt; i++)
+            switches[i] = Integer.parseInt(st.nextToken()) == 1;
+        // 학생 수 입력
+        int studentCnt = Integer.parseInt(br.readLine());
+        // 학생 입력 및 성별에 따른 처리
+        for (int i=0; i<studentCnt; i++) {
+            st = new StringTokenizer(br.readLine());
+            int sex = Integer.parseInt(st.nextToken());
+            int num = Integer.parseInt(st.nextToken());
+            if (sex == 1)
+                switchMultiple(num);
+            else if (sex == 2)
+                switchInSymmetricRange(num);
+        }
+        // 출력
+        for (int i=1; i<=switchCnt; i++) {
+            int status = switches[i]? 1 : 0;
+            sb.append(status).append(" ");
+            if (i % 20 == 0)
+                sb.append("\n");
+        }
+        System.out.println(sb);
+    }
+
+    public static void switchMultiple(int num) {
+        for (int i=1; i<=switches.length-1; i++) {
+            if (i % num == 0) // 배수면
+                switches[i] = !switches[i]; // 상태 반전
+        }
+    }
+
+    public static boolean isSymmetric(int baseIndex) {
+        for (int cnt = 1; baseIndex+cnt <= switches.length-1 && baseIndex-cnt>0; cnt++) {
+            if (switches[baseIndex+cnt] == switches[baseIndex-cnt])
+                return true;
+        }
+        return false;
+    }
+
+    public static void switchInSymmetricRange(int baseIndex) {
+        if (!isSymmetric(baseIndex)) {
+            switchStatus(baseIndex, baseIndex);
+            return;
+        }
+        int maxCnt = getMaxDistanceToBeSymmetric(baseIndex);
+        switchStatus(baseIndex-maxCnt, baseIndex+maxCnt);
+    }
+
+    static int getMaxDistanceToBeSymmetric(int baseIndex) {
+        int maxCnt = 0;
+        for (int cnt = 1; baseIndex+cnt <= switches.length-1 && baseIndex-cnt>0; cnt++) {
+            if (switches[baseIndex+cnt] != switches[baseIndex-cnt]) {
+                break;
+            }
+            maxCnt = cnt;
+        }
+        return maxCnt;
+    }
+
+    static void switchStatus(int startIndex, int endIndex) {
+        for (int i=startIndex; i<=endIndex; i++) {
+            switches[i] = !switches[i]; // 상태 반전
+        }
+    }
+}

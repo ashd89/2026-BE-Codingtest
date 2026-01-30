@@ -1,0 +1,53 @@
+import java.io.*;
+import java.util.*;
+// 백준 15663
+class Main {
+    static int N;
+    static int M;
+    static int[] arr;
+    static boolean[] visited;
+    static int[] result; // 현재 완성 중인 수열을 담을 배열
+    static StringBuffer sb = new StringBuffer();
+
+    public static void main(String[] args) throws IOException  {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+
+        arr = new int[N];
+        visited = new boolean[N];
+        result = new int[M];
+
+        st = new StringTokenizer(br.readLine());
+        for (int i=0; i<N; i++)
+            arr[i] = Integer.parseInt(st.nextToken()); // 9 7 9 1
+
+        Arrays.sort(arr); // 1 7 9 9
+
+        solve(0);
+        System.out.println(sb);
+    }
+    // 1 7
+    public static void solve(int depth) {
+        if (depth == M) {
+            for (int num : result) {
+                sb.append(num).append(" ");
+            }
+            sb.append("\n");
+
+            return;
+        }
+
+        int before = -1; // 현재 depth에서 직전에 선택했던 숫자를 저장
+        for (int i=0; i<N; i++) {
+            if (visited[i] || arr[i] == before) continue;
+            visited[i] = true;
+            result[depth] = arr[i];
+            before = arr[i]; // 방금 사용한 값을 기록
+            solve(depth + 1);
+            visited[i] = false;
+        }
+    }
+}
